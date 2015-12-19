@@ -1,0 +1,14 @@
+activity/activity-riverhexactivity.svg
+activity/activity.info
+bin/libgdksharpglue-2.so
+bin/libgladesharpglue-2.so
+bin/libglibsharpglue-2.so
+bin/libgtksharpglue-2.so
+bin/libMonoPosixHelper.so
+bin/libpangosharpglue-2.so
+bin/riverhexactivity-activity
+bin/riverhexactivity.exe
+bin/RiverHexActivity.png
+bin/uiX11Util.so
+bin/locale/fr/activity.linfo
+bin/locale/fr/LC_MESSAGES/org.olpcfrance.RiverHexActivity.mo

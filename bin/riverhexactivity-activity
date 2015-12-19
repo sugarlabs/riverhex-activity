@@ -1,0 +1,60 @@
+#!/bin/sh
+# Author: Lionel Laské
+# Original Author: Torello Querci - Bert Freudenberg
+# Purpose: Run mono binary application.
+#
+echo "$0" "$@"
+echo
+
+# arguments are unordered, have to loop
+args=""
+while [ -n "$2" ] ; do
+    case "$1" in
+        -b | --bundle-id)   bundle_id="$2"   ; args="$args BUNDLE_ID $2" ;;
+        -a | --activity-id) activity_id="$2" ; args="$args ACTIVITY_ID $2";;
+        -o | --object-id)   object_id="$2"   ; args="$args OBJECT_ID $2";;
+        -u | --uri)         uri="$2"         ; args="$args URI $2";;
+        *) echo unknown argument $1 $2 ;;
+    esac
+    shift;shift
+done
+
+# really need bundle id and activity id
+if [ -z "$bundle_id" -o -z "$activity_id" ] ; then
+  echo ERROR: bundle-id and activity-id arguments required
+  echo Aborting
+  exit 1
+fi
+
+# some debug output
+echo launching $bundle_id instance $activity_id
+[ -n "$object_id"   ] && echo with journal obj $object_id
+[ -n "$uri"         ] && echo loading uri $uri
+echo
+
+# sanitize
+[ -z "$SUGAR_PROFILE" ] && SUGAR_PROFILE=default
+[ -z "$SUGAR_ACTIVITY_ROOT" ] && SUGAR_ACTIVITY_ROOT="$HOME/.sugar/$SUGAR_PROFILE/etoys"
+
+export SUGAR_BUNDLE_PATH=`dirname $0`
+export PATH=$SUGAR_BUNDLE_PATH:$PATH
+
+cd $SUGAR_BUNDLE_PATH/..
+export LD_LIBRARY_PATH=$SUGAR_BUNDLE_PATH:$LD_LIBRARY_PATH
+
+# Try to setup the SHARED_DIR
+export MONO_SHARED_DIR=$TMPDIR
+
+# now run the mono application
+if [ -z "$object_id" ] ; then
+  exec riverhexactivity.exe \
+      -sugarBundleId $bundle_id \
+      -sugarActivityId $activity_id \
+      $args < /dev/null > /dev/null
+else
+  exec riverhexactivity.exe \
+      -sugarBundleId $bundle_id \
+      -sugarActivityId $activity_id \
+      -objectId $object_id \
+      $args < /dev/null > /dev/null
+fi
